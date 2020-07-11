@@ -44,7 +44,7 @@ if __name__ == "__main__":
 * Flask
 * SQLAlchemy
 * HTML5
-* Bootstrap4
+* Bootstrap4 (CDN)
 * JavaScript (Vanilla)
 * JQuery3
 * Ve tabii ki de 10 hızlı parmak 😃
