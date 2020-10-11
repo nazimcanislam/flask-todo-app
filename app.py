@@ -1,7 +1,11 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+
 import os
 import string
 
-from datetime import datetime  # Todo oluşturulma tarihlerini sakla
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -9,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 __author__ = "Nazımcan İslam"
 
 
-dir_path: str = os.path.dirname(os.path.realpath(__file__))
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 app = Flask(__name__)
 app.secret_key = 'admin'
@@ -19,6 +23,9 @@ db = SQLAlchemy(app)
 
 
 class Todo(db.Model):
+    """
+    Veri tabanında saklanacak verilerin modelini tanımlayan sınıf...
+    """
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
@@ -30,6 +37,10 @@ class Todo(db.Model):
 
 @app.route("/")
 def index():
+    """
+    Bu fonksiyon ana sayfa rotası için index.html'i yükler ve
+    veri tabanından tüm verileri çekip gönderir.
+    """
 
     todos = Todo.query.all()
 
@@ -38,35 +49,36 @@ def index():
 
 @app.route("/add", methods=["GET", "POST"])
 def add_todo():
+    """
+    Bu rota, yeni bir todo ekler. Eğer form POST olarak gelmiş ise işlemleri yapıp
+    ana sayfayı yükler. Eğer değil ise hiçbir işlem yapmadan ana sayfaya döner.
+    """
 
     if request.method == "POST":
-
         title = string.capwords(request.form.get("todo_name").capitalize())
-        
         content = request.form.get("todo_content")
         content = content[0].upper() + content[1:]
-
         now = datetime.now()
-
         new_todo = Todo(title=title, content=content, complete=False, date=now, finished_date=None)
 
         db.session.add(new_todo)
         db.session.commit()
 
         return redirect(url_for("index"))
-
     else:
         return redirect(url_for("index"))
 
 
 @app.route("/complete/<string:id>")
 def complete_todo(id):
+    """
+    Bir todo'yu tamamlandı işareti koyar.
+    """
 
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
         return redirect(url_for("index"))
-
     else:
         if todo.complete == False:
             todo.complete = True
@@ -76,17 +88,20 @@ def complete_todo(id):
             todo.finished_date = None
 
         db.session.commit()
+
         return redirect(url_for("index"))
 
 
 @app.route("/delete/<string:id>")
 def delete_todo(id):
+    """
+    Seçilen bir todo'yu veri tabanından siler.
+    """
 
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
         return redirect(url_for("index"))
-
     else:
         db.session.delete(todo)
         db.session.commit()
@@ -96,6 +111,10 @@ def delete_todo(id):
 
 @app.route("/delete/all")
 def delete_all_todos():
+    """
+    Eğer toplamda 10 veya daha fazla todo varsa yeni bir tuş eklenir.
+    Ve bu tuş, basıldığında bir soru sorar: Bütün todo'lar silinecek, emin misiniz?
+    """
 
     todos = Todo.query.all()
 
@@ -107,6 +126,9 @@ def delete_all_todos():
 
 @app.route("/delete/all/sure")
 def delete_all_todos_sure():
+    """
+    Eğer kullanıcı tüm todo'ları silmekte emin ise hepsini siler.
+    """
 
     todos = Todo.query.all()
 
@@ -120,6 +142,10 @@ def delete_all_todos_sure():
 
 @app.route("/detail/<string:id>")
 def detail_todo(id):
+    """
+    Seçilmiş olan todo'nun detaylı bilgi sayfasını yükler.
+    Todo yok ise ana sayfaya yönlendirilir.
+    """
 
     todo = Todo.query.filter_by(id=id).first()
 
@@ -131,6 +157,10 @@ def detail_todo(id):
 
 @app.route("/edit/<string:id>")
 def edit_todo(id):
+    """
+    Seçilmiş olan todo'nun düzenlenme sayfasını yükler.
+    Todo yok ise ana sayfaya yönlendirilir.
+    """
 
     todo = Todo.query.filter_by(id=id).first()
 
@@ -142,12 +172,15 @@ def edit_todo(id):
 
 @app.route("/change/<string:id>", methods=["GET", "POST"])
 def change_todo(id):
+    """
+    Seçilmiş olan todo'nun düzenlenme sayfasını yükler.
+    Todo yok ise ana sayfaya yönlendirilir.
+    """
 
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
         return redirect(url_for("index"))
-
     else:
         new_title = request.form.get("new_todo_name").capitalize()
         new_content = request.form.get("new_todo_content")
@@ -165,11 +198,15 @@ def change_todo(id):
         return redirect(url_for("index"))
 
 
-
 @app.errorhandler(404)
 def todo_not_found(e):
+    """
+    Bulunamayan bir sayfa olursa 404.html'i yükler.
+    """
+
     return render_template("404.html")
 
 
+# Sunucuyu başlat!
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
