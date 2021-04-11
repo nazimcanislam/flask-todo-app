@@ -36,15 +36,16 @@ class Todo(db.Model):
 
 
 @app.route("/")
-def index():
+def home():
     """
-    Bu fonksiyon ana sayfa rotası için index.html'i yükler ve
+    Bu fonksiyon ana sayfa rotası için home.html'i yükler ve
     veri tabanından tüm verileri çekip gönderir.
     """
 
+    title = 'Hızlı ve Kolay Yapılacaklar Listesi'
     todos = Todo.query.all()
 
-    return render_template("index.html", todos=todos)
+    return render_template("home.html", todos=todos, title=title)
 
 
 @app.route("/add", methods=["GET", "POST"])
@@ -64,9 +65,9 @@ def add_todo():
         db.session.add(new_todo)
         db.session.commit()
 
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
     else:
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
 
 
 @app.route("/complete/<string:id>")
@@ -78,7 +79,7 @@ def complete_todo(id):
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
     else:
         if todo.complete == False:
             todo.complete = True
@@ -89,7 +90,7 @@ def complete_todo(id):
 
         db.session.commit()
 
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
 
 
 @app.route("/delete/<string:id>")
@@ -101,12 +102,12 @@ def delete_todo(id):
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
     else:
         db.session.delete(todo)
         db.session.commit()
 
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
 
 
 @app.route("/delete/all")
@@ -116,12 +117,13 @@ def delete_all_todos():
     Ve bu tuş, basıldığında bir soru sorar: Bütün todo'lar silinecek, emin misiniz?
     """
 
+    title = "Tüm Todo'ları Sil"
     todos = Todo.query.all()
 
     if todos == []:
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
 
-    return render_template("delete_all_todos.html", todos=todos)
+    return render_template("delete_all_todos.html", todos=todos, title=title)
 
 
 @app.route("/delete/all/sure")
@@ -137,7 +139,7 @@ def delete_all_todos_sure():
 
     db.session.commit()
 
-    return redirect(url_for("index"))
+    return redirect(url_for("home"))
 
 
 @app.route("/detail/<string:id>")
@@ -150,9 +152,9 @@ def detail_todo(id):
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
     else:
-        return render_template("detail.html", todo=todo)
+        return render_template("detail.html", todo=todo, title=todo.title)
 
 
 @app.route("/edit/<string:id>")
@@ -165,9 +167,9 @@ def edit_todo(id):
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
     else:
-        return render_template("edit.html", todo=todo)
+        return render_template("edit.html", todo=todo, title=todo.title)
 
 
 @app.route("/change/<string:id>", methods=["GET", "POST"])
@@ -180,7 +182,7 @@ def change_todo(id):
     todo = Todo.query.filter_by(id=id).first()
 
     if todo == None:
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
     else:
         new_title = request.form.get("new_todo_name").capitalize()
         new_content = request.form.get("new_todo_content")
@@ -195,7 +197,7 @@ def change_todo(id):
 
         db.session.commit()
 
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
 
 
 @app.errorhandler(404)
