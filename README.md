@@ -4,8 +4,8 @@
 
 Python'ın **Flask** kütüphanesi sayesinde çok kolay bir şekilde web uygulamaları geliştirmek mümkün. Ve bu projede basit bir **todo** uygulaması yaptım.
 
-![Genel ekran](static/images/image1.png)
-![Detay ekranı](static/images/image2.png)
+![Genel ekran](./.github/image1.png)
+![Detay ekranı](./.github/image2.png)
 
 ### Todo Uygulamanın Özellikleri
 * Yeni todo ekleme
@@ -38,18 +38,3 @@ Uygulama çalıştığı sürece yerelinizde (localhost) 5000 portunu kullanacak
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
 ```
-
-### Kullanılan Teknolojiler
-* Python3
-* Flask
-* SQLAlchemy
-* HTML5
-* Bootstrap4 (CND)
-* JavaScript (Vanilla)
-* JQuery3
-* Ve tabii ki de 10 hızlı parmak 😃
-
-### Gerekli Python Sürümü ve Kütüphaneleri
-* python==3.8.2
-* flask==1.1.2
-* flask-SQLAlchemy==2.4.3
