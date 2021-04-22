@@ -4,13 +4,15 @@
 
 import os
 import string
+import webbrowser
 
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
-__author__ = "Nazımcan İslam"
+DEBUG = True
+PORT = 5000
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -211,4 +213,6 @@ def todo_not_found(e):
 
 # Sunucuyu başlat!
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+	if not DEBUG:
+		webbrowser.open_new(f'http://localhost:{PORT}')
+	app.run(debug=DEBUG, port=PORT)
